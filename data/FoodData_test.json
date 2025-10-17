@@ -1,0 +1,138 @@
+[
+	{
+		"category": "Блины и оладьи",
+		"calories": 166.2,
+		"protein": 7.0,
+		"fats": 6.1,
+		"carb": 20.8,
+		"lac_int": "Да"
+	},
+	{
+		"category": "Каши",
+		"calories": 145.0,
+		"protein": 3.4,
+		"fats": 5.9,
+		"carb": 19.4,
+		"lac_int": "Да"
+	},
+	{
+		"category": "Блины и оладьи",
+		"calories": 188.2,
+		"protein": 4.6,
+		"fats": 9.4,
+		"carb": 21.4,
+		"lac_int": "Да"
+	},
+	{
+		"category": "Котлеты",
+		"calories": 192.7,
+		"protein": 8.3,
+		"fats": 15.3,
+		"carb": 5.6,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Шашлык",
+		"calories": 117.9,
+		"protein": 4.4,
+		"fats": 10.7,
+		"carb": 0.8,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Каши",
+		"calories": 133.8,
+		"protein": 3.4,
+		"fats": 7.0,
+		"carb": 14.2,
+		"lac_int": "Да"
+	},
+	{
+		"category": "Пироги",
+		"calories": 186.7,
+		"protein": 8.6,
+		"fats": 8.9,
+		"carb": 17.9,
+		"lac_int": "Да"
+	},
+	{
+		"category": "Супы",
+		"calories": 98.9,
+		"protein": 5.6,
+		"fats": 4.8,
+		"carb": 8.2,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Салаты",
+		"calories": 80.1,
+		"protein": 1.5,
+		"fats": 3.9,
+		"carb": 9.4,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Выпечка",
+		"calories": 261.1,
+		"protein": 6.1,
+		"fats": 7.5,
+		"carb": 41.5,
+		"lac_int": "Да"
+	},
+	{
+		"category": "Супы",
+		"calories": 30.9,
+		"protein": 2.1,
+		"fats": 1.0,
+		"carb": 3.2,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Супы",
+		"calories": 40.9,
+		"protein": 1.8,
+		"fats": 1.6,
+		"carb": 4.3,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Каши",
+		"calories": 122.4,
+		"protein": 4.1,
+		"fats": 2.0,
+		"carb": 20.9,
+		"lac_int": "Да"
+	},
+	{
+		"category": "Супы",
+		"calories": 22.0,
+		"protein": 0.8,
+		"fats": 0.4,
+		"carb": 3.8,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Икра",
+		"calories": 60.9,
+		"protein": 1.0,
+		"fats": 3.6,
+		"carb": 5.9,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Супы",
+		"calories": 29.0,
+		"protein": 2.2,
+		"fats": 1.1,
+		"carb": 2.6,
+		"lac_int": "Нет"
+	},
+	{
+		"category": "Пирожное",
+		"calories": 460.0,
+		"protein": 7.3,
+		"fats": 30.7,
+		"carb": 37.4,
+		"lac_int": "Да"
+	}
+]
