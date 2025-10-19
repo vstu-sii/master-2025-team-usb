@@ -1,0 +1,161 @@
+openapi: 3.0.1
+info:
+  title: AI Meal Planner API
+  description: API для создания и управления персонализированными планами питания.
+  version: 1.0.0
+servers:
+  - url: /api/v1
+paths:
+  /plans:
+    post:
+      summary: Создать новый план питания
+      tags:
+        - Meal Plans
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreatePlanRequest"
+            examples:
+              standard:
+                value:
+                  goal: "Похудение"
+                  calories: 1800
+                  budget: 5000
+                  preferences: "вегетарианская диета"
+                  allergies: "орехи"
+      responses:
+        "201":
+          description: План успешно создан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealPlanResponse"
+        "400":
+          description: Некорректный запрос (ошибка валидации)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "Калорийность должна быть в диапазоне от 1000 до 6000"
+        "429":
+          description: Превышен лимит запросов (Rate Limiting)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: "Превышен дневной лимит генераций планов."
+
+  /plans/{planId}:
+    get:
+      summary: Получить план питания по ID
+      tags:
+        - Meal Plans
+      parameters:
+        - name: planId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MealPlanResponse"
+        "404":
+          description: План не найден
+
+components:
+  schemas:
+    CreatePlanRequest:
+      type: object
+      properties:
+        goal:
+          type: string
+          description: Цель плана (e.g., "Похудение", "Набор массы")
+        calories:
+          type: integer
+          description: Целевая суточная калорийность
+          minimum: 1000
+          maximum: 6000
+        budget:
+          type: integer
+          description: Бюджет на неделю в рублях
+          minimum: 0
+        preferences:
+          type: string
+          description: Пищевые предпочтения
+        allergies:
+          type: string
+          description: Наличие аллергий
+      required:
+        - goal
+        - calories
+
+    MealPlanResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        weekly_plan:
+          type: array
+          items:
+            $ref: "#/components/schemas/DailyPlan"
+
+    DailyPlan:
+      type: object
+      properties:
+        day_of_week:
+          type: string
+        daily_summary:
+          type: object
+          properties:
+            total_calories:
+              type: integer
+            total_protein:
+              type: integer
+            total_fat:
+              type: integer
+            total_carbs:
+              type: integer
+        meals:
+          type: array
+          items:
+            $ref: "#/components/schemas/Meal"
+
+    Meal:
+      type: object
+      properties:
+        meal_type:
+          type: string
+        dish_name:
+          type: string
+        calories:
+          type: integer
+        protein:
+          type: integer
+        fat:
+          type: integer
+        carbs:
+          type: integer
+        recipe:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
