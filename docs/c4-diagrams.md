@@ -1,24 +1,25 @@
 ## 📘 Введение
 
-Документ описывает архитектуру веб-приложения **AI Meal Planner** на уровнях C4: **Context** (контекст системы) и **Container** (контейнеры).  
-Цель — зафиксировать границы системы, внешние взаимодействия, ключевые подсистемы, выбор технологий, интерфейсы и риски. Документ служит основой для разработки и дальнейшей детализации.
+Документ описывает архитектуру веб-приложения **AI Meal Planner** на уровнях C4: **Context** и **Container**.
 
 ---
 
-## 1. Context Diagram — Контекст системы
-
-**Цель:** показать, как система взаимодействует с пользователями и внешними сервисами.
+## 1. Context Diagram
 
 ```mermaid
 graph TD
     U[Пользователь] -->|Вводит цели, предпочтения, бюджет| S[AI Meal Planner System]
     S -->|Генерирует меню, рецепты, список покупок| U
     S -->|Запрос данных о продуктах и калориях| API[Внешние API (Edamam, Spoonacular)]
-    S -->|Генерация рекомендаций и текстов| LLM[AI Engine (OpenAI API / HF)]
+    S -->|Генерация рекомендаций и текстов| LLM[AI Engine (OpenAI API / HuggingFace)]
     S -->|Платежи/подписки| P[Платёжный сервис (Stripe/YooKassa)]
+````
 
+---
 
-## 2. Container Diagram — Контейнеры системы
+## 2. Container Diagram
+
+```mermaid
 graph TD
     A[Frontend (React + TailwindCSS)] -->|REST API / HTTPS| B[Backend (FastAPI / Django REST Framework)]
     B -->|SQL Queries / ORM| C[PostgreSQL Database]
@@ -27,29 +28,54 @@ graph TD
     B -->|Metrics / Logs| F[Monitoring & Logging (Prometheus, Grafana, Sentry)]
     B -->|Background jobs| G[Workers (Celery / RQ) + Redis]
     B -->|File storage| H[S3-compatible Storage]
+```
+
+### Контейнеры
+
+| Контейнер     | Технологии                      | Назначение             |
+| ------------- | ------------------------------- | ---------------------- |
+| Frontend      | React + TailwindCSS             | UI                     |
+| Backend       | FastAPI / Django REST Framework | REST API и логика      |
+| Database      | PostgreSQL                      | Хранение данных        |
+| AI Engine     | OpenAI API / HuggingFace        | Генерация рекомендаций |
+| External APIs | Edamam / Spoonacular            | Данные о продуктах     |
+| Monitoring    | Prometheus, Grafana, Sentry     | Метрики и логирование  |
+| Workers       | Celery / RQ + Redis             | Фоновые задачи         |
+| Storage       | S3-compatible                   | Хранение файлов        |
 
 ---
 
 ## 3. Обоснование технологий
 
-| Компонент | Технология | Обоснование |
-|------------|-------------|-------------|
-| **Frontend** | React + TailwindCSS | Современный, отзывчивый UI с быстрым рендерингом и адаптивным дизайном |
-| **Backend** | Django REST Framework | Ускоряет разработку REST API, имеет встроенные средства аутентификации и сериализации данных |
-| **Database** | PostgreSQL | Надёжная и масштабируемая СУБД, поддерживает сложные запросы и хранение JSON |
-| **AI Engine** | OpenAI API | Позволяет генерировать персонализированные рекомендации и текстовые описания блюд |
-| **Monitoring** | Grafana + Sentry | Обеспечивает мониторинг метрик и логирование ошибок для повышения стабильности |
-| **CI/CD** | GitHub Actions | Автоматизирует тестирование и развертывание, снижая вероятность ошибок при деплое |
+| Компонент  | Технология            | Обоснование                   |
+| ---------- | --------------------- | ----------------------------- |
+| Frontend   | React + TailwindCSS   | UI                            |
+| Backend    | Django REST Framework | REST API                      |
+| Database   | PostgreSQL            | Надёжная БД                   |
+| AI Engine  | OpenAI API            | Рекомендации                  |
+| Monitoring | Grafana + Sentry      | Метрики и логирование         |
+| CI/CD      | GitHub Actions        | Автоматизация тестов и деплоя |
 
 ---
 
 ## 4. Интерфейсы компонентов
 
-| Компонент | Взаимодействие | Формат |
-|------------|----------------|--------|
-| **Frontend → Backend** | REST API | JSON |
-| **Backend → Database** | ORM / SQL | Таблицы PostgreSQL |
-| **Backend → AI Engine** | HTTP-запросы | JSON |
-| **Backend → External APIs** | REST-запросы | JSON |
+| Компонент               | Взаимодействие | Формат  |
+| ----------------------- | -------------- | ------- |
+| Frontend → Backend      | REST API       | JSON    |
+| Backend → Database      | ORM / SQL      | Таблицы |
+| Backend → AI Engine     | HTTP           | JSON    |
+| Backend → External APIs | REST           | JSON    |
+
+---
+
+## 5. Definition of Done
+
+* Context и Container диаграммы созданы в формате Mermaid
+* Таблицы контейнеров, технологий и интерфейсов компонентов заполнены
+* Документ сохранён как `docs/architecture/c4-diagrams.md`
+* Walkthrough проведён, получен ✅ от команды или ментора
+
+```
 
 ---
