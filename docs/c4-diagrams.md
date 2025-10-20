@@ -8,11 +8,11 @@
 
 ```mermaid
 graph TD
-    U[Пользователь] -->|Вводит цели, предпочтения, бюджет| S[AI Meal Planner System]
-    S -->|Генерирует меню, рецепты, список покупок| U
-    S -->|Запрос данных о продуктах и калориях| API[Внешние API (Edamam, Spoonacular)]
-    S -->|Генерация рекомендаций и текстов| LLM[AI Engine (OpenAI API / HuggingFace)]
-    S -->|Платежи/подписки| P[Платёжный сервис (Stripe/YooKassa)]
+    U[User] -->|Inputs goals, preferences, budget| S[AI Meal Planner System]
+    S -->|Generates menu, recipes, shopping list| U
+    S -->|Requests product/calorie data| API[External APIs]
+    S -->|Generates recommendations & texts| LLM[AI Engine]
+    S -->|Payments/subscriptions| P[Payment Service]
 ````
 
 ---
@@ -79,3 +79,4 @@ graph TD
 ```
 
 ---
+
