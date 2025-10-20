@@ -21,13 +21,13 @@ graph TD
 
 ```mermaid
 graph TD
-    A[Frontend (React + TailwindCSS)] -->|REST API / HTTPS| B[Backend (FastAPI / Django REST Framework)]
-    B -->|SQL Queries / ORM| C[PostgreSQL Database]
-    B -->|Prompt / Response (HTTPS)| D[AI Engine (OpenAI API / HuggingFace)]
-    B -->|External Data (HTTPS)| E[Food & Recipe APIs (Edamam / Spoonacular)]
-    B -->|Metrics / Logs| F[Monitoring & Logging (Prometheus, Grafana, Sentry)]
-    B -->|Background jobs| G[Workers (Celery / RQ) + Redis]
-    B -->|File storage| H[S3-compatible Storage]
+    A[Frontend] -->|REST API / HTTPS| B[Backend]
+    B -->|SQL Queries / ORM| C[Database]
+    B -->|Prompt / Response| D[AI Engine]
+    B -->|External Data| E[External APIs]
+    B -->|Metrics / Logs| F[Monitoring]
+    B -->|Background jobs| G[Workers]
+    B -->|File storage| H[Storage]
 ```
 
 ### Контейнеры
@@ -79,4 +79,5 @@ graph TD
 ```
 
 ---
+
 
