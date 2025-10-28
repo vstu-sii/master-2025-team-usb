@@ -1,5 +1,6 @@
 name: CI
 
+# Автоматическая проверка на PR (pull и push reauest)
 on:
   push:
     branches:
