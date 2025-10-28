@@ -1,65 +1,88 @@
-from dotenv import load_dotenv
-from langfuse import observe
-from openai import OpenAI
+# ml/models/baseline.py
+
 import os
 import json
-from ..prompt_templates import MEAL_PLAN_TEMPLATE
+import time
+from dotenv import load_dotenv
+from langfuse import observe  # 👈 единственная связь с Langfuse
+from openai import OpenAI
+from ..prompt_templates import MEAL_PLAN_TEMPLATE_DAY
 
-load_dotenv()  # Загружает переменные из .env в os.environ
+load_dotenv()
 
-# Пример доступа:
-openai_api_key = os.environ.get("OPENAI_API_KEY")
-langfuse_secret = os.environ.get("LANGFUSE_SECRET_KEY")
-
-# Настройка клиента OpenAI
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 
 class BaselineModel:
     """
-    Простейшая LLM модель с поддержкой Langfuse.
+    LLM модель с генерацией недельного плана по дням.
+    Интеграция с Langfuse выполняется только через декоратор @observe.
     """
 
-    def __init__(self, model_name="gpt-4o-mini", temperature=0.7):
+    def __init__(self, model_name="gpt-4o-mini", temperature=0.7, max_tokens=1500):
         self.model_name = model_name
         self.temperature = temperature
+        self.max_tokens = max_tokens
 
-    @observe(as_type="generation")
-    def generate(self, user_data: dict, user_id: str) -> dict:
+    def build_prompt_day(self, day_data: dict) -> str:
+        """Формируем промпт для одного дня."""
+        return MEAL_PLAN_TEMPLATE_DAY.format(**day_data)
+
+    @observe(as_type="generation")  # 👈 Langfuse автоматически логирует этот вызов
+    def generate(self, user_data: dict, user_id: str, retries: int = 3, delay: int = 2) -> dict:
         """
-        Генерация недельного плана питания.
+        Генерация недельного плана день за днем.
+        Langfuse автоматически трассирует все вызовы LLM через декоратор.
         """
-        # Формируем промпт
-        prompt = MEAL_PLAN_TEMPLATE.format(**user_data)
+        weekly_plan = []
 
-        try:
-            response = client.chat.completions.create(
-                model=self.model_name,
-                messages=[
-                    {"role": "system", "content": "You are a helpful assistant designed to output JSON."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=self.temperature,
-            )
+        days = [
+            {"day_of_week": d, **user_data}
+            for d in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        ]
 
-            raw_output = response.choices[0].message.content
+        for day_idx, day_data in enumerate(days, start=1):
+            prompt = self.build_prompt_day(day_data)
+            raw_output = ""
 
-            # --- Очищаем JSON от тройных кавычек ---
-            clean_output = raw_output.strip()
-            if clean_output.startswith("```json"):
-                clean_output = clean_output[len("```json"):].strip()
-            if clean_output.endswith("```"):
-                clean_output = clean_output[:-3].strip()
+            for attempt in range(1, retries + 1):
+                try:
+                    response = client.chat.completions.create(
+                        model=self.model_name,
+                        messages=[
+                            {"role": "system", "content": "You are a helpful assistant that outputs strict JSON."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        temperature=self.temperature,
+                        max_tokens=self.max_tokens,
+                    )
 
-            # Пытаемся распарсить JSON
-            try:
-                parsed_output = json.loads(clean_output)
-                return parsed_output
-            except json.JSONDecodeError:
-                return {"error": "Failed to decode JSON", "raw_output": raw_output}
+                    raw_output = response.choices[0].message.content.strip()
 
-        except Exception as e:
-            return {"error": str(e), "raw_output": ""}
+                    clean_output = raw_output
+                    if clean_output.startswith("```json"):
+                        clean_output = clean_output[len("```json"):].strip()
+                    if clean_output.endswith("```"):
+                        clean_output = clean_output[:-3].strip()
 
-# Создаём экземпляр модели
+                    day_plan = json.loads(clean_output)
+                    weekly_plan.append(day_plan)
+
+                    print(f"День {day_idx}/7 обработан успешно")
+                    break  # выход из цикла попыток
+
+                except Exception as e:
+                    print(f"⚠️ Ошибка генерации дня {day_idx} (attempt {attempt}/{retries}): {e}")
+                    if attempt < retries:
+                        time.sleep(delay)
+                    else:
+                        weekly_plan.append({
+                            "error": str(e),
+                            "raw_output": raw_output,
+                            "day_of_week": day_data.get("day_of_week")
+                        })
+
+        return {"weekly_plan": weekly_plan}
+
+
 baseline_model = BaselineModel()
