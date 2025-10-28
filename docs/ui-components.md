@@ -20,7 +20,6 @@
 
 - Реактивные компоненты, совместимые с React/Next.js.
 - TailwindCSS + shadcn/ui (Card, Button, Tabs, Dialog).
-- Один источник данных (React Query или SWR).
 
 ---
 
