@@ -1,0 +1,82 @@
+version: "3.9"
+
+services:
+  db:
+    build: ./database
+    container_name: mealplanner_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mealplanner
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  api:
+    build: ./api
+    container_name: mealplanner_api
+    depends_on:
+      db:
+        condition: service_healthy
+      llm:
+        condition: service_started
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_URL=http://llm:5000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  frontend:
+    build: ./webpages
+    container_name: mealplanner_frontend
+    depends_on:
+      - api
+    ports:
+      - "8080:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  llm:
+    build: ./LLM
+    container_name: llm
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./LLM/data:/app/data:ro
+    env_file:
+      - ./LLM/.env 
+    environment:
+      - MODEL_NAME=gpt-4
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+
+  jupyter:
+      image: jupyter/minimal-notebook:latest
+      container_name: jupyter_lab
+      volumes:
+        - ./LLM:/home/jovyan/work   
+      ports:
+        - "8888:8888"
+      environment:
+        - JUPYTER_TOKEN=meal
+      command: start-notebook.sh --NotebookApp.token='meal'
+
+volumes:
+  db_data:
