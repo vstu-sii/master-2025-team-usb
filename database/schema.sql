@@ -1,43 +1,62 @@
--- Схема для таблицы пользователей
--- Пользователи аутентифицируются только через Google OAuth2, поэтому пароль не хранится.
+-- 1. Таблица пользователей
 CREATE TABLE users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Уникальный идентификатор пользователя
-    google_id VARCHAR(255) UNIQUE NOT NULL,       -- Уникальный ID от Google
-    email VARCHAR(255) UNIQUE NOT NULL,           -- Email пользователя, используется как основной идентификатор
-    full_name VARCHAR(255),                       -- Полное имя из Google-профиля
-    avatar_url TEXT,                              -- URL аватара из Google-профиля
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), -- Дата создания профиля
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()  -- Дата последнего обновления профиля
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255),
+    auth_provider VARCHAR(50) DEFAULT 'google',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Схема для таблицы планов питания
--- Хранит параметры, которые пользователь вводил для генерации плана.
+-- 2. Планы питания
 CREATE TABLE meal_plans (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(), -- Уникальный идентификатор плана
-    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- Связь с пользователем
-    goal TEXT NOT NULL,                           -- Цель (например, "Похудение")
-    calories_target INT NOT NULL,                 -- Целевая калорийность
-    budget_target INT,                            -- Целевой бюджет (опционально)
-    preferences TEXT,                             -- Пищевые предпочтения (опционально)
-    allergies TEXT,                               -- Аллергии (опционально)
-    status VARCHAR(50) DEFAULT 'active',          -- Статус плана ('active', 'archived')
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(), -- Дата создания
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()  -- Дата последнего обновления
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    goal VARCHAR(255) NOT NULL,
+    calories INT CHECK (calories BETWEEN 1000 AND 6000),
+    budget NUMERIC(10,2) CHECK (budget >= 0),
+    preferences TEXT,
+    allergies TEXT,
+    total_days INT DEFAULT 7,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Схема для хранения результатов генерации от LLM
--- Хранит как исходный промпт, так и полученный JSON.
-CREATE TABLE llm_generations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),                                -- Уникальный идентификатор генерации
-    meal_plan_id UUID NOT NULL REFERENCES meal_plans(id) ON DELETE CASCADE,       -- Связь с конкретным планом питания
-    llm_prompt TEXT NOT NULL,                                                     -- Промпт, отправленный в LLM
-    llm_response_json JSONB NOT NULL,                                             -- JSON-ответ от LLM
-    estimated_cost NUMERIC(10, 2),                                                -- Примерная стоимость, рассчитанная из ответа
-    generation_time_ms INT,                                                       -- Время генерации в миллисекундах
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()                                 -- Дата генерации
+-- 3. Блюда в плане
+CREATE TABLE meals (
+    id SERIAL PRIMARY KEY,
+    meal_plan_id INT NOT NULL REFERENCES meal_plans(id) ON DELETE CASCADE,
+    day_of_week VARCHAR(20) NOT NULL,
+    meal_type VARCHAR(50) NOT NULL, -- Завтрак, Обед, Ужин, Перекус
+    dish_name VARCHAR(255) NOT NULL,
+    calories INT,
+    protein INT,
+    fat INT,
+    carbs INT,
+    recipe TEXT
 );
 
--- Индексы для ускорения запросов
-CREATE INDEX idx_users_google_id ON users(google_id);
-CREATE INDEX idx_meal_plans_user_id ON meal_plans(user_id);
-CREATE INDEX idx_llm_generations_meal_plan_id ON llm_generations(meal_plan_id);
+-- 4. Список покупок
+CREATE TABLE shopping_lists (
+    id SERIAL PRIMARY KEY,
+    meal_plan_id INT NOT NULL REFERENCES meal_plans(id) ON DELETE CASCADE,
+    category VARCHAR(100),
+    item_name VARCHAR(255),
+    quantity VARCHAR(50),
+    checked BOOLEAN DEFAULT FALSE
+);
+
+-- 5. История взаимодействия с LLM
+CREATE TABLE llm_requests (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    meal_plan_id INT REFERENCES meal_plans(id) ON DELETE CASCADE,
+    request_json JSONB,
+    response_json JSONB,
+    status VARCHAR(50) DEFAULT 'success',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 🔍 Индексы
+CREATE INDEX idx_mealplan_user ON meal_plans(user_id);
+CREATE INDEX idx_meals_plan ON meals(meal_plan_id);
+CREATE INDEX idx_llm_user ON llm_requests(user_id);
+CREATE INDEX idx_shopping_plan ON shopping_lists(meal_plan_id);

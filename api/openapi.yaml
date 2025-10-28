@@ -1,161 +1,226 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: AI Meal Planner API
-  description: API для создания и управления персонализированными планами питания.
   version: 1.0.0
+  description: API для управления планами питания и взаимодействия с LLM
 servers:
-  - url: /api/v1
+  - url: https://api.aimealplanner.com/v1
+    description: Production server
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        email: { type: string, format: email }
+        name: { type: string }
+
+    MealPlan:
+      type: object
+      properties:
+        id: { type: integer }
+        goal: { type: string }
+        calories: { type: integer }
+        budget: { type: number }
+        preferences: { type: string }
+        allergies: { type: string }
+        total_days: { type: integer, default: 7 }
+
+    Meal:
+      type: object
+      properties:
+        id: { type: integer }
+        day_of_week: { type: string }
+        meal_type: { type: string }
+        dish_name: { type: string }
+        recipe: { type: string }
+        calories: { type: integer }
+
+    ShoppingItem:
+      type: object
+      properties:
+        item_name: { type: string }
+        category: { type: string }
+        quantity: { type: string }
+
+    ErrorResponse:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+
 paths:
+  /auth/google:
+    get:
+      summary: Авторизация через Google OAuth
+      responses:
+        "302":
+          description: Redirect на Google OAuth
+        "500":
+          description: Ошибка сервера
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+
   /plans:
+    get:
+      summary: Получить все планы пользователя
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: Список планов
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/MealPlan" }
+
     post:
       summary: Создать новый план питания
-      tags:
-        - Meal Plans
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreatePlanRequest"
-            examples:
-              standard:
-                value:
-                  goal: "Похудение"
-                  calories: 1800
-                  budget: 5000
-                  preferences: "вегетарианская диета"
-                  allergies: "орехи"
+              type: object
+              required: [goal, calories, budget]
+              properties:
+                goal: { type: string }
+                calories: { type: integer, minimum: 1000, maximum: 6000 }
+                budget: { type: number, minimum: 0 }
+                preferences: { type: string }
+                allergies: { type: string }
       responses:
         "201":
-          description: План успешно создан
+          description: План создан
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/MealPlanResponse"
+              schema: { $ref: "#/components/schemas/MealPlan" }
         "400":
-          description: Некорректный запрос (ошибка валидации)
+          description: Неверные данные
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                error: "Калорийность должна быть в диапазоне от 1000 до 6000"
-        "429":
-          description: Превышен лимит запросов (Rate Limiting)
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-              example:
-                error: "Превышен дневной лимит генераций планов."
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
 
-  /plans/{planId}:
+  /plans/{plan_id}:
     get:
-      summary: Получить план питания по ID
-      tags:
-        - Meal Plans
+      summary: Получить детали плана
+      security:
+        - bearerAuth: []
       parameters:
-        - name: planId
+        - name: plan_id
           in: path
           required: true
-          schema:
-            type: string
-            format: uuid
+          schema: { type: integer }
       responses:
         "200":
-          description: Успешный ответ
+          description: Детали плана
           content:
             application/json:
-              schema:
-                $ref: "#/components/schemas/MealPlanResponse"
+              schema: { $ref: "#/components/schemas/MealPlan" }
+        "404":
+          description: План не найден
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
+
+    delete:
+      summary: Удалить план
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: plan_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "204":
+          description: План удалён
         "404":
           description: План не найден
 
-components:
-  schemas:
-    CreatePlanRequest:
-      type: object
-      properties:
-        goal:
-          type: string
-          description: Цель плана (e.g., "Похудение", "Набор массы")
-        calories:
-          type: integer
-          description: Целевая суточная калорийность
-          minimum: 1000
-          maximum: 6000
-        budget:
-          type: integer
-          description: Бюджет на неделю в рублях
-          minimum: 0
-        preferences:
-          type: string
-          description: Пищевые предпочтения
-        allergies:
-          type: string
-          description: Наличие аллергий
-      required:
-        - goal
-        - calories
+  /meals/{plan_id}/replace:
+    post:
+      summary: Заменить блюдо в плане через LLM
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: plan_id
+          in: path
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [dish_name]
+              properties:
+                dish_name: { type: string }
+                reason: { type: string }
+      responses:
+        "200":
+          description: Альтернативные блюда
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Meal" }
+        "400":
+          description: Неверный запрос
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorResponse" }
 
-    MealPlanResponse:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        user_id:
-          type: string
-          format: uuid
-        created_at:
-          type: string
-          format: date-time
-        weekly_plan:
-          type: array
-          items:
-            $ref: "#/components/schemas/DailyPlan"
+  /meals/{plan_id}/shopping-list:
+    get:
+      summary: Получить список покупок
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: plan_id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Список покупок
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/ShoppingItem" }
 
-    DailyPlan:
-      type: object
-      properties:
-        day_of_week:
-          type: string
-        daily_summary:
-          type: object
-          properties:
-            total_calories:
-              type: integer
-            total_protein:
-              type: integer
-            total_fat:
-              type: integer
-            total_carbs:
-              type: integer
-        meals:
-          type: array
-          items:
-            $ref: "#/components/schemas/Meal"
-
-    Meal:
-      type: object
-      properties:
-        meal_type:
-          type: string
-        dish_name:
-          type: string
-        calories:
-          type: integer
-        protein:
-          type: integer
-        fat:
-          type: integer
-        carbs:
-          type: integer
-        recipe:
-          type: string
-
-    ErrorResponse:
-      type: object
-      properties:
-        error:
-          type: string
+  /llm/logs:
+    get:
+      summary: Получить историю обращений к LLM
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: История запросов
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id: { type: integer }
+                    request_json: { type: object }
+                    response_json: { type: object }
+                    created_at: { type: string, format: date-time }
