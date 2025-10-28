@@ -1,0 +1,13 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  # Метрики самого Prometheus
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Пример: мониторинг API (оставить как, есть подтянет апи)
+  - job_name: 'api'
+    static_configs:
+      - targets: ['host.docker.internal:8000'] 

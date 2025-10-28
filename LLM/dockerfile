@@ -1,0 +1,13 @@
+# Dockerfile для LLM
+FROM python:3.11-slim
+
+WORKDIR /app
+COPY . .
+
+# Устанавливаем зависимости
+RUN pip install --no-cache-dir openai pandas tqdm numpy fastapi uvicorn python-dotenv langfuse
+
+EXPOSE 5000
+
+# Запускаем сервер FastAPI
+CMD ["uvicorn", "llm_server:app", "--host", "0.0.0.0", "--port", "5000"]
