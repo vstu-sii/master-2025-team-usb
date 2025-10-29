@@ -17,6 +17,12 @@ ENV/
 # Environment
 .env
 .env.local
+.venv
+.venv.local
+venv/
+.venv/
+env/
+ENV/
 
 # Database
 *.db
