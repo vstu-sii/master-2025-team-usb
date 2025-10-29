@@ -6,7 +6,7 @@ import time
 from dotenv import load_dotenv
 from langfuse import observe  # 👈 единственная связь с Langfuse
 from openai import OpenAI
-from ..prompt_templates import MEAL_PLAN_TEMPLATE_DAY
+from ..prompt_templates import MEAL_PLAN_TEMPLATE_DAY, MEAL_REPLACEMENT_TEMPLATE
 
 load_dotenv()
 
@@ -72,7 +72,7 @@ class BaselineModel:
                     break  # выход из цикла попыток
 
                 except Exception as e:
-                    print(f"⚠️ Ошибка генерации дня {day_idx} (attempt {attempt}/{retries}): {e}")
+                    print(f"Ошибка генерации дня {day_idx} (attempt {attempt}/{retries}): {e}")
                     if attempt < retries:
                         time.sleep(delay)
                     else:
@@ -83,6 +83,41 @@ class BaselineModel:
                         })
 
         return {"weekly_plan": weekly_plan}
+
+    def replace_meal(self, data: dict) -> dict:
+        """
+        Генерация замены блюда на день с использованием шаблона MEAL_REPLACEMENT_TEMPLATE
+        """
+        prompt = MEAL_REPLACEMENT_TEMPLATE.format(**data)
+
+        try:
+            response = client.chat.completions.create(
+                model=self.model_name,
+                messages=[
+                    {"role": "system", "content": "Ты помощник, генерирующий JSON для замены блюда."},
+                    {"role": "user", "content": prompt}
+                ],
+                temperature=0.5,
+                max_tokens=500,
+            )
+
+            raw_output = response.choices[0].message.content.strip()
+            if raw_output.startswith("```json"):
+                raw_output = raw_output[len("```json"):].strip()
+            if raw_output.endswith("```"):
+                raw_output = raw_output[:-3].strip()
+
+            return json.loads(raw_output)
+
+        except Exception as e:
+            return {
+                "day_of_week": data['day_of_week'],
+                "meal_type": data['meal_type'],
+                "old_dish": data['old_dish'],
+                "new_dish": "NONE",
+                "new_calories": 0,
+                "error": str(e)
+            }
 
 
 baseline_model = BaselineModel()
