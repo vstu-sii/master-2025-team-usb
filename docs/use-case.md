@@ -20,21 +20,21 @@ left to right direction
 actor "Пользователь" as User
 
 rectangle "AI Meal Planner" {
-    usecase "UC-1 Регистрация пользователя" as UC1
-    usecase "UC-2 Генерация плана питания" as UC2
-    usecase "UC-3 Замена блюда" as UC3
-    usecase "UC-4 Просмотр сохранённых планов" as UC4
-    usecase "UC-5 Генерация списка покупок" as UC5
+  usecase "UC-1: Регистрация пользователя" as UC1
+  usecase "UC-2: Генерация персонального плана питания" as UC2
+  usecase "UC-4: Просмотр сохранённых планов питания" as UC4
+  usecase "UC-5: Генерация и экспорт списка покупок" as UC5
 
-    UC2 <.extend.> UC3 : «расширение»
-    UC2 <.include.> UC5 : «включает»
+  usecase "UC-3: Замена блюда в плане" as UC3
+
+  UC3 .> UC2 : <<extend>>
 }
 
-User --> UC1
-User --> UC2
-User --> UC3
-User --> UC4
-User --> UC5
+User -- UC1
+User -- UC2
+User -- UC4
+User -- UC5
+
 @enduml
 ```
 
