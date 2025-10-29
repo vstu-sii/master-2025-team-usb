@@ -31,9 +31,12 @@ for idx, dish in enumerate(dishes_list, start=1):
             temperature=0.3,
             response_format={"type": "json_object"},
             messages=[
-                {"role": "system", "content": "Ты профессиональный диетолог. Отвечай строго в формате JSON."},
-                {"role": "user", "content": prompt}
-            ]
+                {
+                    "role": "system",
+                    "content": "Ты профессиональный диетолог. Отвечай строго в формате JSON.",
+                },
+                {"role": "user", "content": prompt},
+            ],
         )
 
         content = response.choices[0].message.content

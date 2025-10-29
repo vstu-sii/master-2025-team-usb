@@ -4,6 +4,7 @@ from ml.models.baseline import baseline_model
 
 app = FastAPI(title="Meal Plan LLM API")
 
+
 class UserData(BaseModel):
     goal: str
     calories: int
@@ -33,6 +34,7 @@ class UserData(BaseModel):
         if v < 0:
             raise ValueError("Бюджет не может быть отрицательным")
         return v
+
 
 @app.post("/generate_meal_plan/")
 def generate_meal_plan(user_data: UserData):

@@ -36,8 +36,11 @@ class BaselineModel:
             response = client.chat.completions.create(
                 model=self.model_name,
                 messages=[
-                    {"role": "system", "content": "You are a helpful assistant designed to output JSON."},
-                    {"role": "user", "content": prompt}
+                    {
+                        "role": "system",
+                        "content": "You are a helpful assistant designed to output JSON.",
+                    },
+                    {"role": "user", "content": prompt},
                 ],
                 temperature=self.temperature,
             )
@@ -47,7 +50,7 @@ class BaselineModel:
             # --- Очищаем JSON от тройных кавычек ---
             clean_output = raw_output.strip()
             if clean_output.startswith("```json"):
-                clean_output = clean_output[len("```json"):].strip()
+                clean_output = clean_output[len("```json") :].strip()
             if clean_output.endswith("```"):
                 clean_output = clean_output[:-3].strip()
 
@@ -60,6 +63,7 @@ class BaselineModel:
 
         except Exception as e:
             return {"error": str(e), "raw_output": ""}
+
 
 # Создаём экземпляр модели
 baseline_model = BaselineModel()

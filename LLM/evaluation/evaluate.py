@@ -9,16 +9,20 @@ import re
 
 class DatasetValidator:
     def __init__(self, semantic_threshold=0.3, fuzzy_threshold=60):
-        self.semantic_threshold = semantic_threshold  # Понижаем порог для семантического сходства
+        self.semantic_threshold = (
+            semantic_threshold  # Понижаем порог для семантического сходства
+        )
         self.fuzzy_threshold = fuzzy_threshold
         # Загружаем модель для семантического сравнения категорий
-        self.model = SentenceTransformer('sentence-transformers/distiluse-base-multilingual-cased')
+        self.model = SentenceTransformer(
+            "sentence-transformers/distiluse-base-multilingual-cased"
+        )
 
     def load_data(self, true_data_path, pred_data_path):
         """Загрузка данных из JSON файлов"""
-        with open(true_data_path, 'r', encoding='utf-8') as f:
+        with open(true_data_path, "r", encoding="utf-8") as f:
             true_data = json.load(f)
-        with open(pred_data_path, 'r', encoding='utf-8') as f:
+        with open(pred_data_path, "r", encoding="utf-8") as f:
             pred_data = json.load(f)
         return true_data, pred_data
 
@@ -31,7 +35,7 @@ class DatasetValidator:
     def normalize_text(self, text):
         """Нормализация текста для сравнения"""
         text = text.lower().strip()
-        text = re.sub(r'[^\w\s]', '', text)  # Удаляем пунктуацию
+        text = re.sub(r"[^\w\s]", "", text)  # Удаляем пунктуацию
         return text
 
     def compare_category_semantic(self, true_cat, pred_cat):
@@ -81,76 +85,80 @@ class DatasetValidator:
             raise ValueError("Датасеты должны иметь одинаковую длину")
 
         results = {
-            'calories_accuracy': [],
-            'protein_accuracy': [],
-            'fats_accuracy': [],
-            'carb_accuracy': [],
-            'lac_int_accuracy': [],
-            'category_accuracy': [],  # Бинарная accuracy категорий
-            'category_semantic_score': [],  # Числовая оценка семантического сходства
-            'category_fuzzy_score': [],  # Числовая оценка fuzzy matching
+            "calories_accuracy": [],
+            "protein_accuracy": [],
+            "fats_accuracy": [],
+            "carb_accuracy": [],
+            "lac_int_accuracy": [],
+            "category_accuracy": [],  # Бинарная accuracy категорий
+            "category_semantic_score": [],  # Числовая оценка семантического сходства
+            "category_fuzzy_score": [],  # Числовая оценка fuzzy matching
         }
 
         for true_item, pred_item in zip(true_data, pred_data):
             # Проверка числовых полей
-            results['calories_accuracy'].append(
-                self.compare_numerical(true_item['calories'], pred_item['calories'])
+            results["calories_accuracy"].append(
+                self.compare_numerical(true_item["calories"], pred_item["calories"])
             )
-            results['protein_accuracy'].append(
-                self.compare_numerical(true_item['protein'], pred_item['protein'])
+            results["protein_accuracy"].append(
+                self.compare_numerical(true_item["protein"], pred_item["protein"])
             )
-            results['fats_accuracy'].append(
-                self.compare_numerical(true_item['fats'], pred_item['fats'])
+            results["fats_accuracy"].append(
+                self.compare_numerical(true_item["fats"], pred_item["fats"])
             )
-            results['carb_accuracy'].append(
-                self.compare_numerical(true_item['carb'], pred_item['carb'])
+            results["carb_accuracy"].append(
+                self.compare_numerical(true_item["carb"], pred_item["carb"])
             )
 
             # Проверка lac_int (строгое совпадение)
-            results['lac_int_accuracy'].append(
-                true_item['lac_int'] == pred_item['lac_int']
+            results["lac_int_accuracy"].append(
+                true_item["lac_int"] == pred_item["lac_int"]
             )
 
             # Проверка категории
             category_match = self.compare_category_semantic(
-                true_item['category'], pred_item['category']
+                true_item["category"], pred_item["category"]
             )
-            results['category_accuracy'].append(category_match)
+            results["category_accuracy"].append(category_match)
 
             # Числовые оценки для категорий
-            results['category_semantic_score'].append(
+            results["category_semantic_score"].append(
                 self.calculate_semantic_similarity_score(
-                    true_item['category'], pred_item['category']
+                    true_item["category"], pred_item["category"]
                 )
             )
-            results['category_fuzzy_score'].append(
-                self.calculate_fuzzy_score(true_item['category'], pred_item['category'])
+            results["category_fuzzy_score"].append(
+                self.calculate_fuzzy_score(true_item["category"], pred_item["category"])
             )
 
         # Вычисляем итоговые метрики
         metrics = {
-            'calories_accuracy': np.mean(results['calories_accuracy']),
-            'protein_accuracy': np.mean(results['protein_accuracy']),
-            'fats_accuracy': np.mean(results['fats_accuracy']),
-            'carb_accuracy': np.mean(results['carb_accuracy']),
-            'lac_int_accuracy': np.mean(results['lac_int_accuracy']),
-            'category_accuracy': np.mean(results['category_accuracy']),
-            'category_semantic_score': np.mean(results['category_semantic_score']),
-            'category_fuzzy_score': np.mean(results['category_fuzzy_score']),
-            'overall_numerical_accuracy': np.mean([
-                np.mean(results['calories_accuracy']),
-                np.mean(results['protein_accuracy']),
-                np.mean(results['fats_accuracy']),
-                np.mean(results['carb_accuracy'])
-            ]),
-            'overall_accuracy': np.mean([
-                np.mean(results['calories_accuracy']),
-                np.mean(results['protein_accuracy']),
-                np.mean(results['fats_accuracy']),
-                np.mean(results['carb_accuracy']),
-                np.mean(results['lac_int_accuracy']),
-                np.mean(results['category_accuracy'])
-            ])
+            "calories_accuracy": np.mean(results["calories_accuracy"]),
+            "protein_accuracy": np.mean(results["protein_accuracy"]),
+            "fats_accuracy": np.mean(results["fats_accuracy"]),
+            "carb_accuracy": np.mean(results["carb_accuracy"]),
+            "lac_int_accuracy": np.mean(results["lac_int_accuracy"]),
+            "category_accuracy": np.mean(results["category_accuracy"]),
+            "category_semantic_score": np.mean(results["category_semantic_score"]),
+            "category_fuzzy_score": np.mean(results["category_fuzzy_score"]),
+            "overall_numerical_accuracy": np.mean(
+                [
+                    np.mean(results["calories_accuracy"]),
+                    np.mean(results["protein_accuracy"]),
+                    np.mean(results["fats_accuracy"]),
+                    np.mean(results["carb_accuracy"]),
+                ]
+            ),
+            "overall_accuracy": np.mean(
+                [
+                    np.mean(results["calories_accuracy"]),
+                    np.mean(results["protein_accuracy"]),
+                    np.mean(results["fats_accuracy"]),
+                    np.mean(results["carb_accuracy"]),
+                    np.mean(results["lac_int_accuracy"]),
+                    np.mean(results["category_accuracy"]),
+                ]
+            ),
         }
 
         return metrics, results
@@ -161,7 +169,9 @@ def main():
     validator = DatasetValidator(semantic_threshold=0.3, fuzzy_threshold=60)
 
     # Загрузка данных (замените пути на ваши файлы)
-    true_data, pred_data = validator.load_data('../data/FoodData_test.json', 'FoodData_answers.json')
+    true_data, pred_data = validator.load_data(
+        "../data/FoodData_test.json", "FoodData_answers.json"
+    )
 
     # Валидация
     metrics, detailed_results = validator.validate_datasets(true_data, pred_data)
@@ -174,8 +184,12 @@ def main():
     print(f"Общая accuracy числовых полей: {metrics['overall_numerical_accuracy']:.3f}")
     print(f"Accuracy lac_int: {metrics['lac_int_accuracy']:.3f}")
     print(f"Accuracy категорий: {metrics['category_accuracy']:.3f}")
-    print(f"Семантическое сходство категорий (среднее): {metrics['category_semantic_score']:.3f}")
-    print(f"Fuzzy similarity категорий (среднее): {metrics['category_fuzzy_score']:.3f}")
+    print(
+        f"Семантическое сходство категорий (среднее): {metrics['category_semantic_score']:.3f}"
+    )
+    print(
+        f"Fuzzy similarity категорий (среднее): {metrics['category_fuzzy_score']:.3f}"
+    )
     print(f"ОБЩАЯ ACCURACY: {metrics['overall_accuracy']:.3f}")
 
     # Детальные результаты по каждому элементу
@@ -190,7 +204,9 @@ def main():
         print(f"  Carb: {detailed_results['carb_accuracy'][i]}")
         print(f"  Lac_int: {detailed_results['lac_int_accuracy'][i]}")
         print(f"  Category match: {detailed_results['category_accuracy'][i]}")
-        print(f"  Category semantic: {detailed_results['category_semantic_score'][i]:.3f}")
+        print(
+            f"  Category semantic: {detailed_results['category_semantic_score'][i]:.3f}"
+        )
         print(f"  Category fuzzy: {detailed_results['category_fuzzy_score'][i]:.3f}")
         print()
 
