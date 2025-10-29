@@ -19,25 +19,38 @@ graph TD
 
 ```mermaid
 graph TD
-    %% Акторы
-    U[Пользователь]
-    Admin[Администратор]
+    %% Группы контейнеров
+    subgraph UI [Frontend]
+        FE[Frontend Web App]
+    end
 
-    %% Контейнеры
-    FE[Web Frontend]
-    BE[Backend Server]
-    DB[Database]
-    AD[Admin Dashboard]
+    subgraph Server [Backend & Logic]
+        BE[Backend Server]
+        AD[Admin Dashboard]
+        WORK[Background Workers]
+    end
 
-    %% Взаимодействия пользователя с системой
-    U -->|Регистрация, создание планов, просмотр рецептов, экспорт списка| FE
-    FE -->|REST API: запросы и ответы| BE
+    subgraph Data [Data & Storage]
+        DB[Database]
+        STORAGE[File Storage]
+    end
+
+    subgraph External [External Services]
+        AI[AI Engine]
+        API[External APIs]
+        LOG[Monitoring & Logging]
+    end
+
+    %% Взаимодействия
+    FE -->|REST API: регистрация, создание планов, просмотр рецептов, экспорт списка| BE
     BE -->|SQL / ORM: хранение и получение данных| DB
+    BE -->|Prompt / Response: генерация рекомендаций| AI
+    BE -->|External Data: продукты и рецепты| API
+    BE -->|Metrics / Logs| LOG
+    BE -->|Background tasks: обработка очередей| WORK
+    BE -->|File storage: сохранение изображений и документов| STORAGE
+    AD -->|Управление базой данных и анализ статистики| BE
 
-    %% Взаимодействие администратора
-    Admin -->|Управление рецептами и анализ статистики| AD
-    AD -->|REST API / SQL| BE
-    BE -->|SQL / ORM| DB
 
 
 ````
@@ -100,6 +113,7 @@ graph TD
 - [x] Таблицы контейнеров, технологий и интерфейсов компонентов заполнены
 - [x] Документ сохранён как `docs/architecture/c4-diagrams.md`
 - [x] Проведен walkthrough документа с командой, получен ✅ от всех участников.
+
 
 
 
