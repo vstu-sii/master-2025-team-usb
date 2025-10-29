@@ -28,7 +28,7 @@ class BaselineModel:
         """Формируем промпт для одного дня."""
         return MEAL_PLAN_TEMPLATE_DAY.format(**day_data)
 
-    @observe(as_type="generation")  # 👈 Langfuse автоматически логирует этот вызов
+    @observe(as_type="generation") 
     def generate(self, user_data: dict, user_id: str, retries: int = 3, delay: int = 2) -> dict:
         """
         Генерация недельного плана день за днем.
