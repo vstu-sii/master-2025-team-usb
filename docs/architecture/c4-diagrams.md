@@ -17,6 +17,8 @@ graph TD
 
 ---
 
+## 2. Container Diagram
+
 ```mermaid
 graph TD
     %% Контейнеры
@@ -40,23 +42,7 @@ graph TD
     BE -->|File storage: сохранение изображений и документов| STORAGE
     AD -->|Управление базой данных и анализ статистики| BE
 
-
-
-
 ````
-
-## 2. Container Diagram
-
-```mermaid
-graph TD
-    A[Frontend] -->|REST API / HTTPS| B[Backend]
-    B -->|SQL Queries / ORM| C[Database]
-    B -->|Prompt / Response| D[AI Engine]
-    B -->|External Data| E[External APIs]
-    B -->|Metrics / Logs| F[Monitoring]
-    B -->|Background jobs| G[Workers]
-    B -->|File storage| H[Storage]
-```
 
 ### Контейнеры
 
@@ -103,6 +89,7 @@ graph TD
 - [x] Таблицы контейнеров, технологий и интерфейсов компонентов заполнены
 - [x] Документ сохранён как `docs/architecture/c4-diagrams.md`
 - [x] Проведен walkthrough документа с командой, получен ✅ от всех участников.
+
 
 
 
