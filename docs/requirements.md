@@ -25,13 +25,13 @@
 
 ### 3.1 Пользовательские функции
 1. Регистрация, вход и редактирование профиля. - [UC-1](https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/PRD.md#use-case-1-%D1%80%D0%B5%D0%B3%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D0%BE%D0%BB%D1%8C%D0%B7%D0%BE%D0%B2%D0%B0%D1%82%D0%B5%D0%BB%D1%8F)
-2. Ввод данных: возраст, рост, вес, уровень активности, цель, бюджет, аллергии и предпочтения.
-3. Генерация недельного плана питания (7 дней, 3 приёма пищи).
-4. Просмотр сохранённых планов питания с возможностью просмотра рецептов.
-5. Замена блюда в текущем плане питания вручную с учётом целей и ограничений пользователя.
-6. Формирование списка покупок на основе ингредиентов из текущего плана питания.
-7. Хранение истории планов и возможность повторного использования.
-8. Экспорт сформированного списка покупок в формат CSV или PDF.
+2. Ввод данных: возраст, рост, вес, уровень активности, цель, бюджет, аллергии и предпочтения. - [UC-2](https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/PRD.md#use-case-2-%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D0%B3%D0%BE-%D0%BF%D0%BB%D0%B0%D0%BD%D0%B0-%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D1%8F)
+3. Генерация недельного плана питания (7 дней, 3 приёма пищи). - [UC-2](https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/PRD.md#use-case-2-%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%BF%D0%B5%D1%80%D1%81%D0%BE%D0%BD%D0%B0%D0%BB%D1%8C%D0%BD%D0%BE%D0%B3%D0%BE-%D0%BF%D0%BB%D0%B0%D0%BD%D0%B0-%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D1%8F)
+4. Замена блюда в текущем плане питания вручную с учётом целей и ограничений пользователя. - [UC-3](https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/PRD.md#use-case-3-%D0%B7%D0%B0%D0%BC%D0%B5%D0%BD%D0%B0-%D0%B1%D0%BB%D1%8E%D0%B4%D0%B0-%D0%B2-%D0%BF%D0%BB%D0%B0%D0%BD%D0%B5)
+5. Просмотр сохранённых планов питания с возможностью просмотра рецептов. - [UC-4](https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/PRD.md#use-case-4-%D0%BF%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80-%D1%81%D0%BE%D1%85%D1%80%D0%B0%D0%BD%D1%91%D0%BD%D0%BD%D1%8B%D1%85-%D0%BF%D0%BB%D0%B0%D0%BD%D0%BE%D0%B2-%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D1%8F)
+6. Хранение истории планов и возможность повторного использования. - [UC-4](https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/PRD.md#use-case-4-%D0%BF%D1%80%D0%BE%D1%81%D0%BC%D0%BE%D1%82%D1%80-%D1%81%D0%BE%D1%85%D1%80%D0%B0%D0%BD%D1%91%D0%BD%D0%BD%D1%8B%D1%85-%D0%BF%D0%BB%D0%B0%D0%BD%D0%BE%D0%B2-%D0%BF%D0%B8%D1%82%D0%B0%D0%BD%D0%B8%D1%8F)
+7. Формирование списка покупок на основе ингредиентов из текущего плана питания. - [UC-5](https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/PRD.md#use-case-5-%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%B8-%D1%8D%D0%BA%D1%81%D0%BF%D0%BE%D1%80%D1%82-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0-%D0%BF%D0%BE%D0%BA%D1%83%D0%BF%D0%BE%D0%BA)
+8. Экспорт сформированного списка покупок в формат CSV или PDF. - [UC-5](https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/PRD.md#use-case-5-%D0%B3%D0%B5%D0%BD%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8F-%D0%B8-%D1%8D%D0%BA%D1%81%D0%BF%D0%BE%D1%80%D1%82-%D1%81%D0%BF%D0%B8%D1%81%D0%BA%D0%B0-%D0%BF%D0%BE%D0%BA%D1%83%D0%BF%D0%BE%D0%BA)
 
 ### 3.2 Административные функции
 1. Управление базой рецептов и ингредиентов.
