@@ -30,3 +30,4 @@ ENV/
 
 # Alembic
 alembic/versions/*.pyc
+LLM/.env
