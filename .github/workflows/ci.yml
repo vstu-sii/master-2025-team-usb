@@ -33,9 +33,11 @@ jobs:
       # 4. Линтинг
       - name: Lint code
         run: |
-          pip install black flake8
+          pip install black
           black --check .
-          flake8 .
+      
+      # pip install flake8
+      #  flake8 . --max-line-length=110   (для проверки форматирования другой аналог black)
 
       # 5. Запуск тестов
       - name: Run tests
