@@ -6,41 +6,17 @@
 
 ## 1. Context Diagram
 
-```mermaid
-graph TD
-    U[Пользователь] -->|Вводит цели, предпочтения, бюджет| S[AI Meal Planner System]
-    S -->|Генерирует меню, рецепты, список покупок| U
-    S -->|Запрос данных о продуктах и калориях| API[Внешние API: Edamam, Spoonacular]
-    S -->|Генерация рекомендаций и текстов| LLM[AI Engine: OpenAI API / HuggingFace]
-
-````
+<p align="center">
+  <img src="https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/architecture/img_for_git/Context%20diagram.jpg?raw=true" alt="Context Diagram" width="600"/>
+</p>
 
 ---
 
 ## 2. Container Diagram
 
-```mermaid
-graph TD
-    %% Контейнеры
-    FE[Frontend Web App]
-    BE[Backend Server]
-    DB[Database]
-    AD[Admin Dashboard]
-    AI[AI Engine]
-    API[External APIs]
-    LOG[Monitoring & Logging]
-    WORK[Background Workers]
-    STORAGE[File Storage]
-
-    %% Взаимодействия
-    FE -->|REST API: регистрация, создание планов, просмотр рецептов, экспорт списка| BE
-    BE -->|SQL / ORM: хранение и получение данных| DB
-    BE -->|Prompt / Response: генерация рекомендаций| AI
-    BE -->|External Data: продукты и рецепты| API
-    BE -->|Metrics / Logs| LOG
-    BE -->|Background tasks: обработка очередей| WORK
-    BE -->|File storage: сохранение изображений и документов| STORAGE
-    AD -->|Управление базой данных и анализ статистики| BE
+<p align="center">
+  <img src="https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/architecture/img_for_git/Container%20Diagram.jpg?raw=true" alt="Context Diagram" width="1000"/>
+</p>
 
 ````
 
@@ -89,6 +65,7 @@ graph TD
 - [x] Таблицы контейнеров, технологий и интерфейсов компонентов заполнены
 - [x] Документ сохранён как `docs/architecture/c4-diagrams.md`
 - [x] Проведен walkthrough документа с командой, получен ✅ от всех участников.
+
 
 
 
