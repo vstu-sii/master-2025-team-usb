@@ -1,0 +1,138 @@
+[
+    {
+        "category": "Выпечка",
+        "calories": 245.7,
+        "protein": 9.3,
+        "fats": 10.2,
+        "carb": 30.1,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Каши",
+        "calories": 145.3,
+        "protein": 3.1,
+        "fats": 4.2,
+        "carb": 24.5,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Выпечка",
+        "calories": 220.5,
+        "protein": 5.3,
+        "fats": 10.2,
+        "carb": 26.7,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Котлеты",
+        "calories": 250.5,
+        "protein": 14.2,
+        "fats": 18.7,
+        "carb": 5.3,
+        "lac_int": "Нет"
+    },
+    {
+        "category": "Мясные блюда",
+        "calories": 250.5,
+        "protein": 18.3,
+        "fats": 18.7,
+        "carb": 1.2,
+        "lac_int": "Нет"
+    },
+    {
+        "category": "Каша",
+        "calories": 180.5,
+        "protein": 4.2,
+        "fats": 8.7,
+        "carb": 23.4,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Выпечка",
+        "calories": 180.5,
+        "protein": 8.2,
+        "fats": 10.3,
+        "carb": 16.7,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Супы",
+        "calories": 120.5,
+        "protein": 8.3,
+        "fats": 6.2,
+        "carb": 9.5,
+        "lac_int": "Нет"
+    },
+    {
+        "category": "Салаты",
+        "calories": 65.3,
+        "protein": 1.5,
+        "fats": 3.2,
+        "carb": 8.7,
+        "lac_int": "Нет"
+    },
+    {
+        "category": "Выпечка",
+        "calories": 250.5,
+        "protein": 6.2,
+        "fats": 8.3,
+        "carb": 38.7,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Супы",
+        "calories": 60.2,
+        "protein": 4.3,
+        "fats": 2.5,
+        "carb": 7.1,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Супы",
+        "calories": 95.3,
+        "protein": 6.2,
+        "fats": 4.1,
+        "carb": 9.5,
+        "lac_int": "Нет"
+    },
+    {
+        "category": "Каша",
+        "calories": 120.5,
+        "protein": 3.2,
+        "fats": 2.1,
+        "carb": 24.3,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Салаты",
+        "calories": 60.3,
+        "protein": 2.1,
+        "fats": 2.4,
+        "carb": 8.7,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Салаты",
+        "calories": 55.3,
+        "protein": 1.2,
+        "fats": 3.5,
+        "carb": 5.8,
+        "lac_int": "Нет"
+    },
+    {
+        "category": "Супы",
+        "calories": 85.3,
+        "protein": 5.2,
+        "fats": 3.4,
+        "carb": 10.1,
+        "lac_int": "Да"
+    },
+    {
+        "category": "Выпечка",
+        "calories": 420.3,
+        "protein": 6.2,
+        "fats": 24.5,
+        "carb": 45.8,
+        "lac_int": "Да"
+    }
+]
