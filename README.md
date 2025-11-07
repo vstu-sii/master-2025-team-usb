@@ -50,7 +50,7 @@ uvicorn app.main:app --reload
 | Метод  | Endpoint                   | Назначение                         |
 | :----- | :------------------------- | :--------------------------------- |
 | `POST` | `/meal-plans/generate`     | Генерация недельного плана питания |
-| `POST` | `/meal-plans/replace-meal` | Замена блюда в текущем плане       |
+| `PATCH` | `/meal-plans/replace-meal` | Замена блюда в текущем плане       |
 
 ---
 
