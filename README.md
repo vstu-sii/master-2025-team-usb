@@ -140,5 +140,3 @@ Mistral проверяет каждое сгенерированное меню 
 | Monitoring | Langfuse                   |
 | Schemas    | Pydantic v2                |
 | Evaluation | Jupyter, Pandas            |
-
-```
