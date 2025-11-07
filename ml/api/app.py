@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, APIRouter, Query
+from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, field_validator
 from ml.models.baseline import baseline_model
 from langfuse import propagate_attributes
@@ -55,7 +56,7 @@ async def replace_meal(meal_data: MealReplacementData, user_id: str = Query(...,
     try:
         cleaned_data = meal_data.model_dump()
         with propagate_attributes(user_id=user_id):
-            result = baseline_model.replace_meal(cleaned_data, user_id=user_id)
+            result = await baseline_model.replace_meal(cleaned_data, user_id)
         if "error" in result:
             raise HTTPException(status_code=500, detail=result)
         return result
@@ -79,7 +80,7 @@ async def generate_meal_plan(user_data: UserData, user_id: str = Query(..., desc
     try:
         cleaned_data = user_data.model_dump()
         with propagate_attributes(user_id=user_id):
-            result = baseline_model.generate(cleaned_data, user_id=user_id)
+            result = await baseline_model.generate(cleaned_data, user_id)
         if "error" in result:
             raise HTTPException(status_code=500, detail=result)
         return result
