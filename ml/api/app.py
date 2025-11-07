@@ -1,6 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, APIRouter, Query
 from pydantic import BaseModel, field_validator
 from ml.models.baseline import baseline_model
+from langfuse import propagate_attributes
 
 app = FastAPI(title="Meal Plan LLM API")
 
@@ -35,7 +36,7 @@ class UserData(BaseModel):
             raise ValueError("Бюджет не может быть отрицательным")
         return v
 
-class MealReplacementRequest(BaseModel):
+class MealReplacementData(BaseModel):
     day_of_week: str
     meal_type: str
     old_dish: str
@@ -47,20 +48,17 @@ class MealReplacementRequest(BaseModel):
     allergies: str = ""
 
 @app.post("/replace_meal/")
-def replace_meal(req: MealReplacementRequest):
+async def replace_meal(meal_data: MealReplacementData, user_id: str = Query(..., description="ID пользователя")):
     """
-    Заменяет одно блюдо в дневном плане.
-    Если подходящей замены не найдено, возвращает "NONE".
+    Замена блюда для конкретного дня.
     """
     try:
-        input_data = req.model_dump()
-        result = baseline_model.replace_meal(input_data)
-
+        cleaned_data = meal_data.model_dump()
+        with propagate_attributes(user_id=user_id):
+            result = baseline_model.replace_meal(cleaned_data, user_id=user_id)
         if "error" in result:
             raise HTTPException(status_code=500, detail=result)
-
         return result
-
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -73,19 +71,17 @@ def replace_meal(req: MealReplacementRequest):
 )
 
 @app.post("/generate_meal_plan/")
-async def generate_meal_plan(user_data: UserData):
+async def generate_meal_plan(user_data: UserData, user_id: str = Query(..., description="ID пользователя")):
     """
     Эндпоинт генерации плана питания.
     Предобработка и валидация выполняются через Pydantic.
     """
     try:
         cleaned_data = user_data.model_dump()
-        result = baseline_model.generate(cleaned_data, user_id="user_123")
-
+        with propagate_attributes(user_id=user_id):
+            result = baseline_model.generate(cleaned_data, user_id=user_id)
         if "error" in result:
             raise HTTPException(status_code=500, detail=result)
-
         return result
-
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
