@@ -4,14 +4,14 @@ import os
 import time
 from dotenv import load_dotenv
 from langfuse import observe, propagate_attributes
-from langfuse.openai import openai
+from langfuse.openai import AsyncOpenAI
 
 from ..prompt_templates import MEAL_PLAN_TEMPLATE_WEEK, MEAL_REPLACEMENT_TEMPLATE
 from .schemas import WeekPlan, MealReplacement
 
 load_dotenv()
 
-
+openai = AsyncOpenAI()
 class BaselineModel:
     """
     Модель генерации недельного плана питания и замены блюд.
@@ -27,7 +27,7 @@ class BaselineModel:
     # ГЕНЕРАЦИЯ НЕДЕЛЬНОГО ПЛАНА
     # ------------------------------------------------------------------
     @observe(as_type="generation")
-    def generate(
+    async def generate(
         self,
         user_data: dict,
         user_id: str = "anonymous",
@@ -44,7 +44,7 @@ class BaselineModel:
 
             for attempt in range(1, retries + 1):
                 try:
-                    response = openai.chat.completions.create(
+                    response = await openai.chat.completions.create(
                         model=self.model_name,
                         messages=[
                             {"role": "system", "content": "Ты профессиональный диетолог и нутриционист."},
@@ -85,7 +85,7 @@ class BaselineModel:
     # ЗАМЕНА БЛЮДА
     # ------------------------------------------------------------------
     @observe(as_type="generation")
-    def replace_meal(
+    async def replace_meal(
         self,
         data: dict,
         user_id: str = "anonymous",
@@ -98,7 +98,7 @@ class BaselineModel:
             prompt = MEAL_REPLACEMENT_TEMPLATE.format(**data)
 
             try:
-                response = openai.chat.completions.create(
+                response = await openai.chat.completions.create(
                     model=self.model_name,
                     messages=[
                         {"role": "system", "content": "Ты профессиональный диетолог и планировщик питания."},
