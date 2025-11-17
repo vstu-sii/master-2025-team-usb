@@ -15,7 +15,7 @@
 ## 2. Container Diagram
 
 <p align="center">
-  <img src="https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/architecture/img_for_git/Container%20Diagram.jpg?raw=true" alt="Context Diagram" width="1000"/>
+  <img src="https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/architecture/img_for_git/container.png?raw=true" alt="Context Diagram" width="1000"/>
 </p>
 
 
@@ -65,6 +65,7 @@
 - [x] Таблицы контейнеров, технологий и интерфейсов компонентов заполнены
 - [x] Документ сохранён как `docs/architecture/c4-diagrams.md`
 - [x] Проведен walkthrough документа с командой, получен ✅ от всех участников.
+
 
 
 
