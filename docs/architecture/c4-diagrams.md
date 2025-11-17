@@ -7,7 +7,7 @@
 ## 1. Context Diagram
 
 <p align="center">
-  <img src="https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/architecture/img_for_git/Context%20diagram.jpg?raw=true" alt="Context Diagram" width="600"/>
+  <img src="https://github.com/vstu-sii/master-2025-team-usb/blob/SA/PO-branch/docs/architecture/img_for_git/context.png?raw=true" alt="Context Diagram" width="600"/>
 </p>
 
 ---
@@ -65,6 +65,7 @@
 - [x] Таблицы контейнеров, технологий и интерфейсов компонентов заполнены
 - [x] Документ сохранён как `docs/architecture/c4-diagrams.md`
 - [x] Проведен walkthrough документа с командой, получен ✅ от всех участников.
+
 
 
 
