@@ -41,4 +41,3 @@ MEAL_REPLACEMENT_TEMPLATE = """
 
 Если подходящей замены нет, укажи new_dish = "NONE" и new_calories = 0.
 """
-
