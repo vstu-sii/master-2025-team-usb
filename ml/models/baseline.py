@@ -5,6 +5,9 @@ import time
 from dotenv import load_dotenv
 from langfuse import observe, propagate_attributes
 from langfuse.openai import AsyncOpenAI
+import functools
+import hashlib
+from functools import lru_cache
 
 from ..prompt_templates import MEAL_PLAN_TEMPLATE_WEEK, MEAL_REPLACEMENT_TEMPLATE
 from .schemas import WeekPlan, MealReplacement
@@ -22,6 +25,17 @@ class BaselineModel:
         self.model_name = model_name
         self.temperature = temperature
         self.max_tokens = max_tokens
+
+    cache = {}
+    @staticmethod
+    def make_cache_key(user_data: dict) -> str:
+        raw = str(sorted(user_data.items()))
+        return hashlib.md5(raw.encode()).hexdigest()
+
+    @staticmethod
+    @lru_cache(maxsize=128)
+    def cached_week_plan(key: str, result: dict):
+        return result
 
     # ------------------------------------------------------------------
     # ГЕНЕРАЦИЯ НЕДЕЛЬНОГО ПЛАНА
@@ -41,6 +55,12 @@ class BaselineModel:
         with propagate_attributes(user_id=str(user_id)):
             prompt = MEAL_PLAN_TEMPLATE_WEEK.format(**user_data)
             raw_output = ""
+
+            cache_key = BaselineModel.make_cache_key(user_data)
+
+            if cache_key in BaselineModel.cache:
+                print("Использую кэшированный результат")
+                return BaselineModel.cache[cache_key]
 
             for attempt in range(1, retries + 1):
                 try:
@@ -68,6 +88,7 @@ class BaselineModel:
                     else:
                         parsed = WeekPlan(**content)
 
+                    BaselineModel.cache[cache_key] = parsed.model_dump()
                     print("Недельный план успешно сгенерирован")
                     return parsed.model_dump()
 
