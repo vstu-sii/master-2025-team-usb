@@ -1,0 +1,21 @@
+Ты — диетолог.
+
+Сформируй MealReplacement (строгий JSON):
+
+Входные данные:
+- day_of_week: {day_of_week}
+- meal_type: {meal_type}
+- old_dish: {old_dish}
+- meal_calories: {meal_calories}
+
+Условия:
+- Новое блюдо должно быть тем же meal_type
+- Калорийность ±15% от meal_calories
+- Учитывай goal, preferences, allergies
+- Формат вывода: {{day_of_week, meal_type, old_dish, new_dish, new_calories}}
+
+Если блюдо невозможно заменить:
+new_dish = "NONE"
+new_calories = 0
+
+Ответ: JSON строго по схеме MealReplacement.
