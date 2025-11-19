@@ -1,10 +1,23 @@
+from slowapi import Limiter
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+from fastapi.responses import PlainTextResponse
 from fastapi import FastAPI, HTTPException, APIRouter, Query
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, field_validator
 from ml.models.baseline import baseline_model
 from langfuse import propagate_attributes
+from fastapi import Request
 
 app = FastAPI(title="Meal Plan LLM API")
+
+limiter = Limiter(key_func=get_remote_address)
+
+app.state.limiter = limiter
+
+@app.exception_handler(RateLimitExceeded)
+async def rate_limit_handler(request, exc):
+    return PlainTextResponse("Too Many Requests", status_code=429)
 
 class UserData(BaseModel):
     goal: str
@@ -48,8 +61,15 @@ class MealReplacementData(BaseModel):
     preferences: str = ""
     allergies: str = ""
 
-@app.post("/replace_meal/")
-async def replace_meal(meal_data: MealReplacementData, user_id: str = Query(..., description="ID пользователя")):
+@app.patch(
+    "/meal-plans/replace/",
+    response_model=dict,
+    summary="Замена блюда в плане питания",
+    description="Принимает параметры пользователя и возвращает JSON с новым планом питания на неделю.",
+    response_description="JSON с новым недельным планом питания"
+)
+@limiter.limit("1/minute")
+async def replace_meal(request: Request, meal_data: MealReplacementData, user_id: str = Query(..., description="ID пользователя")):
     """
     Замена блюда для конкретного дня.
     """
@@ -64,15 +84,14 @@ async def replace_meal(meal_data: MealReplacementData, user_id: str = Query(...,
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post(
-    "/generate_meal_plan/",
+    "/meal-plans/generate/",
     response_model=dict,
     summary="Генерация недельного плана питания",
     description="Принимает параметры пользователя и возвращает JSON с планом питания на неделю.",
     response_description="JSON с недельным планом питания"
 )
-
-@app.post("/generate_meal_plan/")
-async def generate_meal_plan(user_data: UserData, user_id: str = Query(..., description="ID пользователя")):
+@limiter.limit("3/minute")
+async def generate_meal_plan(request: Request, user_data: UserData, user_id: str = Query(..., description="ID пользователя")):
     """
     Эндпоинт генерации плана питания.
     Предобработка и валидация выполняются через Pydantic.
