@@ -3,7 +3,8 @@
 import os
 import time
 from dotenv import load_dotenv
-from langfuse import observe, propagate_attributes
+from langfuse import observe, propagate_attributes, get_client
+import random
 from langfuse.openai import AsyncOpenAI
 import functools
 import hashlib
@@ -15,6 +16,8 @@ from .schemas import WeekPlan, MealReplacement
 load_dotenv()
 
 openai = AsyncOpenAI()
+
+langfuse_client = get_client()
 class BaselineModel:
     """
     Модель генерации недельного плана питания и замены блюд.
@@ -37,6 +40,16 @@ class BaselineModel:
     def cached_week_plan(key: str, result: dict):
         return result
 
+    @staticmethod
+    def select_ab_prompt(prompt_name: str):
+        """
+        Получает из Langfuse 2 версии промптов и
+        возвращает одну из них случайным образом.
+        """
+        prompt_a = langfuse_client.get_prompt(prompt_name, label="a")
+        prompt_b = langfuse_client.get_prompt(prompt_name, label="b")
+        return random.choice([prompt_a, prompt_b])
+
     # ------------------------------------------------------------------
     # ГЕНЕРАЦИЯ НЕДЕЛЬНОГО ПЛАНА
     # ------------------------------------------------------------------
@@ -53,7 +66,9 @@ class BaselineModel:
         Использует промпт MEAL_PLAN_TEMPLATE_WEEK.
         """
         with propagate_attributes(user_id=str(user_id)):
-            prompt = MEAL_PLAN_TEMPLATE_WEEK.format(**user_data)
+            selected_prompt = BaselineModel.select_ab_prompt("meal-plan-week")
+
+            prompt = selected_prompt.compile(**user_data)
             raw_output = ""
 
             cache_key = BaselineModel.make_cache_key(user_data)
@@ -72,6 +87,7 @@ class BaselineModel:
                         ],
                         temperature=self.temperature,
                         max_tokens=self.max_tokens,
+                        langfuse_prompt=selected_prompt,  # <── A/B tracking
                         response_format={
                             "type": "json_schema",
                             "json_schema": {
@@ -116,7 +132,8 @@ class BaselineModel:
         Использует промпт MEAL_REPLACEMENT_TEMPLATE.
         """
         with propagate_attributes(user_id=str(user_id)):
-            prompt = MEAL_REPLACEMENT_TEMPLATE.format(**data)
+            selected_prompt = BaselineModel.select_ab_prompt("meal-replacement")
+            prompt = selected_prompt.compile(**data)
 
             try:
                 response = await openai.chat.completions.create(
@@ -127,6 +144,7 @@ class BaselineModel:
                     ],
                     temperature=0.5,
                     max_tokens=800,
+                    langfuse_prompt=selected_prompt,
                     response_format={
                         "type": "json_schema",
                         "json_schema": {
