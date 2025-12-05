@@ -1,26 +1,30 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-venv/
-env/
-ENV/
+# Backend (Python)
+backend/.venv/
+backend/.env
+backend/__pycache__/
+backend/*.pyc
+backend/alembic/versions/
+!backend/alembic/versions/script.py.mako
+!backend/alembic/versions/README
+backend/uv.lock
+backend/.DS_Store
 
-# IDE
+# Frontend (React/Vite)
+frontend/node_modules/
+frontend/.env.local
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+frontend/*.log
+frontend/.DS_Store
+
+# IDE / Editor specific
 .vscode/
 .idea/
-*.swp
-*.swo
+/help_assets
 
-# Environment
-.env
-.env.local
-
-# Database
-*.db
-*.sqlite3
-
-# Alembic
-alembic/versions/*.pyc
+# OS specific
+.DS_Store
+Thumbs.db
+# Python cache
+**/__pycache__/

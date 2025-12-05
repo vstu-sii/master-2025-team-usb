@@ -1,0 +1,5 @@
+{
+  "name": "AI Meal Planner",
+  "description": "Smart meal planning application using AI to generate personalized diet plans, recipes, and shopping lists.",
+  "requestFramePermissions": []
+}
